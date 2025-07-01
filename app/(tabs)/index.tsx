@@ -13,18 +13,18 @@ import { fetchMovies } from "@/services/api";
 import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 
+import MovieCard from "@/components/MovieCard";
 import SearchBar from "@/components/SearchBar";
 import useFetch from "@/services/useFetch";
 
 const Index = () => {
   const router = useRouter();
 
-  console.log();
   const {
     data: movies,
     loading: moviesLoading,
     error: moviesError,
-  } = useFetch(() => fetchMovies({ query: "barman" }));
+  } = useFetch(() => fetchMovies({ query: "" }));
 
   return (
     <View className="flex-1 bg-primary">
@@ -37,8 +37,7 @@ const Index = () => {
       <ScrollView
         className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ minHeight: "100%", paddingBottom: 10 }}
-      >
+        contentContainerStyle={{ minHeight: "100%", paddingBottom: 10 }}>
         <Image source={icons.logo} className="w-12 h-10 mt-20 mb-5 mx-auto" />
 
         {moviesLoading ? (
@@ -57,7 +56,7 @@ const Index = () => {
               onPress={() => {
                 router.push("/search");
               }}
-              placeholder="Search for a movie"
+              placeholder="Search for a movies"
             />
 
             <>
@@ -67,7 +66,7 @@ const Index = () => {
 
               <FlatList
                 data={movies}
-                renderItem={({ item }) => <Text className="text-white"> </Text>}
+                renderItem={({ item }) => <MovieCard {...item} />}
                 keyExtractor={(item) => item.id.toString()}
                 numColumns={3}
                 columnWrapperStyle={{
