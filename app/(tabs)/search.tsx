@@ -4,18 +4,31 @@ import { icons } from "@/constants/icons";
 import { images } from "@/constants/images";
 import { fetchMovies } from "@/services/api";
 import useFetch from "@/services/useFetch";
-import { useRouter } from "expo-router";
-import React from "react";
+import LottieView from "lottie-react-native";
+import React, { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
 
 const Search = () => {
-  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const {
     data: movies,
     loading: moviesLoading,
     error: moviesError,
-  } = useFetch(() => fetchMovies({ query: "" }));
+    refetch: moviesLoad,
+    reset,
+  } = useFetch(() => fetchMovies({ query: searchQuery }), false);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(async () => {
+      if (searchQuery.trim()) {
+        await moviesLoad();
+      } else {
+        reset();
+      }
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery]);
 
   return (
     <View className="flex-1 bg-primary">
@@ -31,6 +44,29 @@ const Search = () => {
         keyExtractor={(item) => item.id.toString()}
         className="px-5"
         numColumns={3}
+        ListEmptyComponent={
+          !moviesLoading && !moviesError ? (
+            <View className="mt-10 px-5">
+              <LottieView
+                source={require("../../assets/lotties/movie-search.json")}
+                colorFilters={[
+                  {
+                    keypath: "*",
+                    color: "#E5E0D8",
+                  },
+                ]}
+                autoPlay
+                loop
+                style={{ width: 200, height: 200, alignSelf: "center" }}
+              />
+              <Text className="text-center text-gray-400 text-2xl">
+                {searchQuery.trim()
+                  ? "No movies found..."
+                  : "Search for a movie"}
+              </Text>
+            </View>
+          ) : null
+        }
         columnWrapperStyle={{
           justifyContent: "center",
           gap: 16,
@@ -46,7 +82,11 @@ const Search = () => {
             </View>
 
             <View className="my-5 ">
-              <SearchBar placeholder="Search movies..." />
+              <SearchBar
+                value={searchQuery}
+                onChangeText={(text: string) => setSearchQuery(text)}
+                placeholder="Search movies..."
+              />
             </View>
 
             {moviesLoading && (
@@ -64,11 +104,11 @@ const Search = () => {
 
             {!moviesLoading &&
               !moviesError &&
-              "SEARCH TERM.".trim() &&
+              searchQuery.trim() &&
               movies?.length > 0 && (
                 <Text className="text-xl text-white font-bold">
                   Search results for{" "}
-                  <Text className="text-accent ">SEARCH TERM</Text>
+                  <Text className="text-accent ">{searchQuery}</Text>
                 </Text>
               )}
           </>

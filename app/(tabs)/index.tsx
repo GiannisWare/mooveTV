@@ -27,7 +27,7 @@ const Index = () => {
   } = useFetch(() => fetchMovies({ query: "" }));
 
   return (
-    <View className="flex-1 bg-primary">
+    <View className="flex-1 bg-dark-100">
       <Image
         source={images.bg}
         className="absolute w-full z-0"
@@ -57,7 +57,7 @@ const Index = () => {
               onPress={() => {
                 router.push("/search");
               }}
-              placeholder="Search for a movies"
+              placeholder="Search for a movie"
             />
 
             <>
