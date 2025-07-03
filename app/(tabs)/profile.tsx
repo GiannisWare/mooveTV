@@ -1,10 +1,14 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 
 const profile = () => {
   return (
-    <View>
-      <Text>profile</Text>
+    <View className='bg-dark-100 flex-1 px-10'>
+
+       
+      <View> 
+
+      </View>
     </View>
   )
 }
