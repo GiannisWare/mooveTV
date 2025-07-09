@@ -32,12 +32,11 @@ const Search = () => {
   }, [searchQuery]);
 
   useEffect(() => {
-    if (movies?.length > 0 && movies?.[0])
-      updateSearchCount(searchQuery, movies[0]);
+    if (movies?.[0]) updateSearchCount(searchQuery, movies[0]);
   }, [movies]);
 
   return (
-    <View className="flex-1 bg-primary">
+    <View className="flex-1 bg-dark-100">
       <Image
         source={images.bg}
         className="flex-1 absolute w-full z-0"
@@ -108,15 +107,12 @@ const Search = () => {
               </Text>
             )}
 
-            {!moviesLoading &&
-              !moviesError &&
-              searchQuery.trim() &&
-              movies?.length > 0 && (
-                <Text className="text-xl text-white font-bold">
-                  Search results for{" "}
-                  <Text className="text-accent ">{searchQuery}</Text>
-                </Text>
-              )}
+            {!moviesLoading && !moviesError && searchQuery.trim() && (
+              <Text className="text-xl text-white font-bold">
+                Search results for{" "}
+                <Text className="text-accent ">{searchQuery}</Text>
+              </Text>
+            )}
           </>
         }
       />

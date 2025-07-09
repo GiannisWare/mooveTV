@@ -4,6 +4,7 @@ import {
   FlatList,
   Image,
   ScrollView,
+  StatusBar,
   Text,
   View,
 } from "react-native";
@@ -36,80 +37,134 @@ const Index = () => {
 
   return (
     <View className="flex-1 bg-dark-100">
+      {/* Status Bar */}
+      <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
+
+     
       <Image
         source={images.bg}
-        className="absolute w-full z-0"
+        className="flex-1 absolute w-full z-0"
         resizeMode="cover"
       />
 
+      {/* Main Content */}
       <ScrollView
-        className="flex-1 px-5"
+        className="flex-1"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ minHeight: "100%", paddingBottom: 10 }}
-      >
-        <Image
-          source={icons.logo}
-          className="w-[96px] h-[96px] mt-20 mb-5 mx-auto"
-        />
-
-        {moviesLoading || trendingLoading ? (
-          <ActivityIndicator
-            size="large"
-            color="#0000ff"
-            className="mt-10 self-center"
+        contentContainerStyle={{
+          minHeight: "100%",
+          paddingBottom: 120,
+          paddingHorizontal: 24,
+        }}>
+        {/* Header Section */}
+        <View className="items-center pt-16 pb-8">
+          <Image
+            source={icons.logo}
+            className="w-24 h-24 mb-2"
+          
           />
-        ) : moviesError || trendingError ? (
-          <Text className="text-white text-5xl">
-            Error: {moviesError?.message || trendingError?.message}
+          <Text className="text-text-secondary text-sm font-medium tracking-wide">
+            Discover Amazing Movies
           </Text>
+        </View>
+
+        {/* Loading State */}
+        {moviesLoading || trendingLoading ? (
+          <View className="flex-1 justify-center items-center py-20">
+            <ActivityIndicator size="large" color="#4a9eff" className="mb-4" />
+            <Text className="text-text-secondary text-sm">
+              Loading movies...
+            </Text>
+          </View>
+        ) : moviesError || trendingError ? (
+          /* Error State */
+          <View className="flex-1 justify-center items-center py-20">
+            <View className="bg-surface p-6 rounded-2xl border border-border-subtle">
+              <Text className="text-status-error text-lg font-semibold mb-2 text-center">
+                Something went wrong
+              </Text>
+              <Text className="text-text-muted text-sm text-center">
+                {moviesError?.message || trendingError?.message}
+              </Text>
+            </View>
+          </View>
         ) : (
-          <View className="flex-1 mt-5">
-            <SearchBar
-              onPress={() => {
-                router.push("/search");
-              }}
-              placeholder="Search for a movie"
-            />
-            {trendingMovies && (
-              <View className="mt-10">
-                <Text className="text-lg text-white font-bold mb-3">
-                  Trending Movies
-                </Text>
+          /* Main Content */
+          <View className="flex-1">
+            {/* Search Bar */}
+            <View className="mb-8">
+              <SearchBar
+                onPress={() => {
+                  router.push("/search");
+                }}
+                placeholder="Search for movies..."
+              />
+            </View>
+
+            {/* Trending Section */}
+            {trendingMovies && trendingMovies.length > 0 && (
+              <View className="mb-8">
+                <View className="flex-row items-center justify-between mb-4">
+                  <Text className="text-xl font-bold text-text-primary">
+                    Trending Now
+                  </Text>
+                  <View className="bg-accent px-3 py-1 rounded-full">
+                    <Text className="text-xs font-medium text-white uppercase tracking-wide">
+                      Hot
+                    </Text>
+                  </View>
+                </View>
+
+                <FlatList
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  ItemSeparatorComponent={() => <View className="w-4" />}
+                  contentContainerStyle={{ paddingHorizontal: 4 }}
+                  data={trendingMovies}
+                  renderItem={({ item, index }) => (
+                    <TrendingCard movie={item} index={index} />
+                  )}
+                  keyExtractor={(item) => item.movie_id.toString()}
+                />
               </View>
             )}
-            <>
-            
 
-              <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              ItemSeparatorComponent={() => <View className="w-4"></View>}
-                className="mb-4 mt-3"
-                data={trendingMovies}
-                renderItem={({ item, index }) => (
-                  <TrendingCard movie={item} index={index} />
-                )}
-                keyExtractor={(item) => item.movie_id.toString()}
-              />
-                <Text className="text-lg text-white font-bold mt-5 mb-3">
-                Latest Movies
-              </Text>
+            {/* Latest Movies Section */}
+            <View>
+              <View className="flex-row items-center justify-between mb-4">
+                <Text className="text-xl font-bold text-text-primary">
+                  Latest Movies
+                </Text>
+                <Text className="text-text-secondary text-md font-medium">
+                  {movies?.length || 0} movies
+                </Text>
+              </View>
 
-              <FlatList
-                data={movies}
-                renderItem={({ item }) => <MovieCard {...item} />}
-                keyExtractor={(item) => item.id.toString()}
-                numColumns={3}
-                columnWrapperStyle={{
-                  justifyContent: "flex-start",
-                  gap: 20,
-                  paddingRight: 5,
-                  marginBottom: 10,
-                }}
-                className="mt-2 pb-32"
-                scrollEnabled={false}
-              />
-            </>
+              {movies && movies.length > 0 ? (
+                <FlatList
+                  data={movies}
+                  renderItem={({ item }) => <MovieCard {...item} />}
+                  keyExtractor={(item) => item.id.toString()}
+                  numColumns={3}
+                  columnWrapperStyle={{
+                    justifyContent: "space-between",
+                    marginBottom: 4,
+                  }}
+                  ItemSeparatorComponent={() => <View className="h-4" />}
+                  scrollEnabled={false}
+                  contentContainerStyle={{ paddingTop: 8 }}
+                />
+              ) : (
+                <View className="bg-surface p-8 rounded-2xl border border-border-subtle items-center">
+                  <Text className="text-text-secondary text-base font-medium mb-2">
+                    No movies found
+                  </Text>
+                  <Text className="text-text-muted text-sm text-center">
+                    Try refreshing or check your connection
+                  </Text>
+                </View>
+              )}
+            </View>
           </View>
         )}
       </ScrollView>

@@ -30,11 +30,13 @@ export const fetchMovies = async ({
 };
 
 export const fetchMovieDetails = async (
-  movieId: string
+  movieId: string,
+  includeVideos: boolean = false
 ): Promise<MovieDetails> => {
   try {
+    const append = includeVideos ? "&append_to_response=videos" : "";
     const response = await fetch(
-      `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}`,
+      `${TMDB_CONFIG.BASE_URL}/movie/${movieId}?api_key=${TMDB_CONFIG.API_KEY}${append}`,
       {
         method: "GET",
         headers: TMDB_CONFIG.headers,
