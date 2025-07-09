@@ -1,9 +1,9 @@
 import { useRouter } from "expo-router";
 import {
   ActivityIndicator,
+  Animated,
   FlatList,
   Image,
-  ScrollView,
   StatusBar,
   Text,
   View,
@@ -40,7 +40,6 @@ const Index = () => {
       {/* Status Bar */}
       <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
 
-     
       <Image
         source={images.bg}
         className="flex-1 absolute w-full z-0"
@@ -48,9 +47,8 @@ const Index = () => {
       />
 
       {/* Main Content */}
-      <ScrollView
+      <Animated.View
         className="flex-1"
-        showsVerticalScrollIndicator={false}
         contentContainerStyle={{
           minHeight: "100%",
           paddingBottom: 120,
@@ -58,11 +56,7 @@ const Index = () => {
         }}>
         {/* Header Section */}
         <View className="items-center pt-16 pb-8">
-          <Image
-            source={icons.logo}
-            className="w-24 h-24 mb-2"
-          
-          />
+          <Image source={icons.logo} className="w-24 h-24 mb-2" />
           <Text className="text-text-secondary text-sm font-medium tracking-wide">
             Discover Amazing Movies
           </Text>
@@ -167,7 +161,7 @@ const Index = () => {
             </View>
           </View>
         )}
-      </ScrollView>
+      </Animated.View>
     </View>
   );
 };
