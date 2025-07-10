@@ -144,7 +144,7 @@ const SavedMovieCard = ({
       style={[animatedStyle, { width: ITEM_WIDTH }]}
       className="mb-4">
       <TouchableOpacity
-        onPress={handlePress}
+       
         className="bg-surface rounded-2xl overflow-hidden border border-border-subtle/30 shadow-lg"
         style={{
           shadowColor: "#000",

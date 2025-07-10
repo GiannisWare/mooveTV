@@ -1,9 +1,7 @@
 import { useRouter } from "expo-router";
 import {
   ActivityIndicator,
-  Animated,
   FlatList,
-  Image,
   StatusBar,
   Text,
   View,
@@ -19,6 +17,22 @@ import SearchBar from "@/components/SearchBar";
 import TrendingCard from "@/components/TrendingCard";
 import { getTrendingMovies } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
+import { Dimensions } from "react-native";
+import Animated, {
+  FadeInDown,
+  FadeInUp,
+  SlideInUp,
+  ZoomIn,
+} from "react-native-reanimated";
+
+const screenWidth = Dimensions.get("window").width;
+const horizontalPadding = 24 * 2;
+const interItemSpacing = 8;
+const numColumns = 3;
+
+const itemWidth =
+  (screenWidth - horizontalPadding - interItemSpacing * (numColumns - 1)) /
+  numColumns;
 
 const Index = () => {
   const router = useRouter();
@@ -35,56 +49,92 @@ const Index = () => {
     error: moviesError,
   } = useFetch(() => fetchMovies({ query: "" }));
 
+  const AnimatedFlatList = Animated.createAnimatedComponent(FlatList);
+
   return (
     <View className="flex-1 bg-dark-100">
       {/* Status Bar */}
       <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
 
-      <Image
+      <Animated.Image
+        entering={FadeInUp.duration(800)}
         source={images.bg}
         className="flex-1 absolute w-full z-0"
         resizeMode="cover"
       />
 
       {/* Main Content */}
-      <Animated.View
+      <Animated.ScrollView
+        entering={FadeInUp.duration(500)}
         className="flex-1"
         contentContainerStyle={{
           minHeight: "100%",
           paddingBottom: 120,
           paddingHorizontal: 24,
-        }}>
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Header Section */}
-        <View className="items-center pt-16 pb-8">
-          <Image source={icons.logo} className="w-24 h-24 mb-2" />
-          <Text className="text-text-secondary text-sm font-medium tracking-wide">
+        <Animated.View className="items-center pt-16 pb-8">
+          <Animated.Image source={icons.logo} className="w-24 h-24 mb-2" />
+          <Animated.Text
+            entering={FadeInUp.delay(600).duration(400)}
+            className="text-text-secondary text-sm font-medium tracking-wide"
+          >
             Discover Amazing Movies
-          </Text>
-        </View>
+          </Animated.Text>
+        </Animated.View>
 
         {/* Loading State */}
         {moviesLoading || trendingLoading ? (
-          <View className="flex-1 justify-center items-center py-20">
-            <ActivityIndicator size="large" color="#4a9eff" className="mb-4" />
-            <Text className="text-text-secondary text-sm">
+          <Animated.View
+            entering={FadeInUp.delay(300).duration(500)}
+            className="flex-1 justify-center items-center py-20"
+          >
+            <Animated.View entering={ZoomIn.delay(100).duration(400)}>
+              <ActivityIndicator
+                size="large"
+                color="#4a9eff"
+                className="mb-4"
+              />
+            </Animated.View>
+            <Animated.Text
+              entering={FadeInUp.delay(200).duration(400)}
+              className="text-text-secondary text-sm"
+            >
               Loading movies...
-            </Text>
-          </View>
+            </Animated.Text>
+          </Animated.View>
         ) : moviesError || trendingError ? (
           /* Error State */
-          <View className="flex-1 justify-center items-center py-20">
-            <View className="bg-surface p-6 rounded-2xl border border-border-subtle">
-              <Text className="text-status-error text-lg font-semibold mb-2 text-center">
+          <Animated.View
+            entering={SlideInUp.delay(300).duration(600).springify()}
+            className="flex-1 justify-center items-center py-20"
+          >
+            <Animated.View
+              entering={ZoomIn.delay(100).duration(500)}
+              className="bg-surface p-6 rounded-2xl border border-border-subtle"
+            >
+              <Animated.Text
+                entering={FadeInDown.delay(200).duration(400)}
+                className="text-status-error text-lg font-semibold mb-2 text-center"
+              >
                 Something went wrong
-              </Text>
-              <Text className="text-text-muted text-sm text-center">
+              </Animated.Text>
+              <Animated.Text
+                entering={FadeInUp.delay(300).duration(400)}
+                className="text-text-muted text-sm text-center"
+              >
                 {moviesError?.message || trendingError?.message}
-              </Text>
-            </View>
-          </View>
+              </Animated.Text>
+            </Animated.View>
+          </Animated.View>
         ) : (
           /* Main Content */
-          <View className="flex-1">
+          <Animated.View
+            entering={FadeInUp.delay(200).duration(600)}
+            className="flex-1"
+          >
             {/* Search Bar */}
             <View className="mb-8">
               <SearchBar
@@ -109,14 +159,17 @@ const Index = () => {
                   </View>
                 </View>
 
-                <FlatList
+                <AnimatedFlatList
+                  entering={FadeInUp.delay(200).duration(500).springify()}
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  ItemSeparatorComponent={() => <View className="w-4" />}
-                  contentContainerStyle={{ paddingHorizontal: 4 }}
+                  ItemSeparatorComponent={() => <View className="w-6"></View>}
+                  className="mb-4 mt-3"
                   data={trendingMovies}
                   renderItem={({ item, index }) => (
-                    <TrendingCard movie={item} index={index} />
+                   
+                      <TrendingCard movie={item} index={index} />
+                 
                   )}
                   keyExtractor={(item) => item.movie_id.toString()}
                 />
@@ -124,20 +177,29 @@ const Index = () => {
             )}
 
             {/* Latest Movies Section */}
-            <View>
-              <View className="flex-row items-center justify-between mb-4">
-                <Text className="text-xl font-bold text-text-primary">
+            <Animated.View entering={FadeInUp.delay(1100).duration(600)}>
+              <Animated.View
+                entering={FadeInUp.delay(1200).duration(500).springify()}
+                className="flex-row items-center justify-between mb-4"
+              >
+                <Animated.Text
+                  entering={FadeInDown.delay(1300).duration(400)}
+                  className="text-xl font-bold text-text-primary"
+                >
                   Latest Movies
-                </Text>
-                <Text className="text-text-secondary text-md font-medium">
+                </Animated.Text>
+                <Animated.Text
+                  entering={FadeInDown.delay(1300).duration(400)}
+                  className="text-text-secondary text-md font-medium"
+                >
                   {movies?.length || 0} movies
-                </Text>
-              </View>
+                </Animated.Text>
+              </Animated.View>
 
               {movies && movies.length > 0 ? (
                 <FlatList
                   data={movies}
-                  renderItem={({ item }) => <MovieCard {...item} />}
+                  renderItem={({ item, index }) => <MovieCard {...item} />}
                   keyExtractor={(item) => item.id.toString()}
                   numColumns={3}
                   columnWrapperStyle={{
@@ -149,19 +211,28 @@ const Index = () => {
                   contentContainerStyle={{ paddingTop: 8 }}
                 />
               ) : (
-                <View className="bg-surface p-8 rounded-2xl border border-border-subtle items-center">
-                  <Text className="text-text-secondary text-base font-medium mb-2">
+                <Animated.View
+                  entering={ZoomIn.delay(1500).duration(600).springify()}
+                  className="bg-surface p-8 rounded-2xl border border-border-subtle items-center"
+                >
+                  <Animated.Text
+                    entering={FadeInDown.delay(1600).duration(400)}
+                    className="text-text-secondary text-base font-medium mb-2"
+                  >
                     No movies found
-                  </Text>
-                  <Text className="text-text-muted text-sm text-center">
+                  </Animated.Text>
+                  <Animated.Text
+                    entering={FadeInUp.delay(1700).duration(400)}
+                    className="text-text-muted text-sm text-center"
+                  >
                     Try refreshing or check your connection
-                  </Text>
-                </View>
+                  </Animated.Text>
+                </Animated.View>
               )}
-            </View>
-          </View>
+            </Animated.View>
+          </Animated.View>
         )}
-      </Animated.View>
+      </Animated.ScrollView>
     </View>
   );
 };
