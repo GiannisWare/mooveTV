@@ -160,16 +160,14 @@ const Index = () => {
                 </View>
 
                 <AnimatedFlatList
-                  entering={FadeInUp.delay(200).duration(500).springify()}
+                  entering={FadeInUp.delay(400).duration(500).springify()}
                   horizontal
                   showsHorizontalScrollIndicator={false}
-                  ItemSeparatorComponent={() => <View className="w-6"></View>}
+                  ItemSeparatorComponent={() => <View className="w-4"></View>}
                   className="mb-4 mt-3"
                   data={trendingMovies}
                   renderItem={({ item, index }) => (
-                   
-                      <TrendingCard movie={item} index={index} />
-                 
+                    <TrendingCard movie={item} index={index} />
                   )}
                   keyExtractor={(item) => item.movie_id.toString()}
                 />
@@ -199,7 +197,7 @@ const Index = () => {
               {movies && movies.length > 0 ? (
                 <FlatList
                   data={movies}
-                  renderItem={({ item, index }) => <MovieCard {...item} />}
+                  renderItem={({ item }) => <MovieCard {...item} />}
                   keyExtractor={(item) => item.id.toString()}
                   numColumns={3}
                   columnWrapperStyle={{
