@@ -26,9 +26,9 @@ import Animated, {
 } from "react-native-reanimated";
 
 const screenWidth = Dimensions.get("window").width;
-const spacing = 16; 
+const spacing = 16;
 const columns = 3;
-const horizontalPadding = 24; 
+const horizontalPadding = 24;
 const totalSpacing = spacing * (columns - 1);
 const cardWidth =
   (screenWidth - horizontalPadding * 2 - totalSpacing) / columns;
@@ -157,7 +157,10 @@ const Index = () => {
                   className="mb-4 mt-3"
                   data={trendingMovies}
                   renderItem={({ item, index }) => (
-                    <TrendingCard movie={item} index={index} />
+                    <Animated.View
+                      entering={FadeInUp.delay(800 + index * 200).springify()}>
+                      <TrendingCard movie={item} index={index} />
+                    </Animated.View>
                   )}
                   keyExtractor={(item) => item.movie_id.toString()}
                 />
