@@ -162,7 +162,7 @@ const MovieDetails = () => {
         scrollEventThrottle={16}>
         {/* Hero Section with Poster */}
         <Animated.View style={[heroAnimatedStyle]} className="relative">
-          <View style={{ width, height: height * 0.6 }}>
+          <View style={{ width, height: height * 0.7 }}>
             {/* Backdrop Image */}
             <Image
               source={{
@@ -170,7 +170,7 @@ const MovieDetails = () => {
                   movie?.backdrop_path || movie?.poster_path
                 }`,
               }}
-              style={{ width, height: height * 0.75 }}
+              style={{ width, height: height * 0.7 }}
               resizeMode="cover"
             />
 

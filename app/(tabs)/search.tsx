@@ -7,7 +7,24 @@ import { updateSearchCount } from "@/services/appwrite";
 import useFetch from "@/services/useFetch";
 import LottieView from "lottie-react-native";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, FlatList, Image, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  Image,
+  Text,
+  View,
+} from "react-native";
+import Animated, { FadeInUp } from "react-native-reanimated";
+
+// Use the same width calculations as index.tsx
+const screenWidth = Dimensions.get("window").width;
+const spacing = 16;
+const columns = 3;
+const horizontalPadding = 20; // 20 for px-5 (5 * 4 = 20)
+const totalSpacing = spacing * (columns - 1);
+const cardWidth =
+  (screenWidth - horizontalPadding * 2 - totalSpacing) / columns;
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -45,7 +62,16 @@ const Search = () => {
 
       <FlatList
         data={movies}
-        renderItem={({ item }) => <MovieCard {...item} />}
+        renderItem={({ item, index }) => (
+          <Animated.View
+            entering={FadeInUp.delay(100 + index * 100).springify()}
+            style={{
+              width: cardWidth,
+              marginBottom: 32,
+            }}>
+            <MovieCard {...item} />
+          </Animated.View>
+        )}
         keyExtractor={(item) => item.id.toString()}
         className="px-5"
         numColumns={3}
@@ -73,12 +99,11 @@ const Search = () => {
           ) : null
         }
         columnWrapperStyle={{
-          justifyContent: "center",
-          gap: 16,
-          marginVertical: 16,
+          justifyContent: "space-between",
         }}
         contentContainerStyle={{
           paddingBottom: 100,
+          paddingTop: 8, 
         }}
         ListHeaderComponent={
           <>
@@ -86,7 +111,7 @@ const Search = () => {
               <Image source={icons.logo} className="w-[96px] h-[96px]" />
             </View>
 
-            <View className="my-5 ">
+            <View className="my-5">
               <SearchBar
                 value={searchQuery}
                 onChangeText={(text: string) => setSearchQuery(text)}
@@ -97,20 +122,20 @@ const Search = () => {
             {moviesLoading && (
               <ActivityIndicator
                 size="large"
-                color="#0000ff"
+                color="#4a9eff"
                 className="my-3"
               />
             )}
             {moviesError && (
               <Text className="text-red-500 px-5 my-3">
-                Error: {moviesError.message}{" "}
+                Error: {moviesError.message}
               </Text>
             )}
 
             {!moviesLoading && !moviesError && searchQuery.trim() && (
-              <Text className="text-xl text-white font-bold">
+              <Text className="text-xl text-white font-bold mb-4">
                 Search results for{" "}
-                <Text className="text-accent ">{searchQuery}</Text>
+                <Text className="text-accent">{searchQuery}</Text>
               </Text>
             )}
           </>
