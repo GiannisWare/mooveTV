@@ -26,13 +26,12 @@ import Animated, {
 } from "react-native-reanimated";
 
 const screenWidth = Dimensions.get("window").width;
-const horizontalPadding = 24 * 2;
-const interItemSpacing = 8;
-const numColumns = 3;
-
-const itemWidth =
-  (screenWidth - horizontalPadding - interItemSpacing * (numColumns - 1)) /
-  numColumns;
+const spacing = 16; 
+const columns = 3;
+const horizontalPadding = 24; 
+const totalSpacing = spacing * (columns - 1);
+const cardWidth =
+  (screenWidth - horizontalPadding * 2 - totalSpacing) / columns;
 
 const Index = () => {
   const router = useRouter();
@@ -138,7 +137,7 @@ const Index = () => {
 
             {/* Trending Section */}
             {trendingMovies && trendingMovies.length > 0 && (
-              <View className="mb-8">
+              <View className="mb-8 flex-1">
                 <View className="flex-row items-center justify-between mb-4">
                   <Text className="text-xl font-bold text-text-primary">
                     Trending Now
@@ -185,16 +184,25 @@ const Index = () => {
               {movies && movies.length > 0 ? (
                 <FlatList
                   data={movies}
-                  renderItem={({ item }) => <MovieCard {...item} />}
                   keyExtractor={(item) => item.id.toString()}
                   numColumns={3}
+                  renderItem={({ item, index }) => (
+                    <Animated.View
+                      entering={FadeInUp.delay(800 + index * 200).springify()}
+                      style={{
+                        width: cardWidth,
+                        marginBottom: 32,
+                      }}>
+                      <MovieCard {...item} />
+                    </Animated.View>
+                  )}
                   columnWrapperStyle={{
                     justifyContent: "space-between",
-                    marginBottom: 4,
                   }}
-                  ItemSeparatorComponent={() => <View className="h-4" />}
                   scrollEnabled={false}
-                  contentContainerStyle={{ paddingTop: 8 }}
+                  contentContainerStyle={{
+                    paddingTop: 8,
+                  }}
                 />
               ) : (
                 <Animated.View

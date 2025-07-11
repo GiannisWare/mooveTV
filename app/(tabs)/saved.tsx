@@ -4,6 +4,8 @@ import { fetchMovies } from "@/services/api";
 import { getFavorites } from "@/utils/favorite";
 import { router, useFocusEffect } from "expo-router";
 import React, { useCallback, useState } from "react";
+import { Dimensions } from "react-native";
+
 import {
   ActivityIndicator,
   FlatList,
@@ -16,6 +18,12 @@ import {
   View,
 } from "react-native";
 import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+
+const screenWidth = Dimensions.get("window").width;
+const spacing = 12;
+const columns = 3;
+const totalSpacing = spacing * (columns - 1) + 20; // 20 for horizontal padding (10 each side)
+const cardWidth = (screenWidth - totalSpacing) / columns;
 
 const EmptyState = () => (
   <Animated.View
@@ -192,10 +200,19 @@ const SavedMoviesScreen = () => {
               numColumns={3}
               columnWrapperStyle={{
                 justifyContent: "space-between",
-                paddingHorizontal: 10,
-                marginBottom: 32,
+              
               }}
-              renderItem={({ item }) => <MovieCard {...item} />}
+              renderItem={({ item, index }) => (
+                <Animated.View
+                  entering={FadeInUp.delay(100 + index * 100).springify()}
+                  style={{
+                    width: cardWidth,
+                    marginRight: (index + 1) % 3 === 0 ? 0 : spacing,
+                    marginBottom: 32,
+                  }}>
+                  <MovieCard {...item} />
+                </Animated.View>
+              )}
               refreshControl={
                 <RefreshControl
                   refreshing={refreshing}
