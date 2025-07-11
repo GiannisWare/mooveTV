@@ -1,10 +1,14 @@
 import { icons } from "@/constants/icons";
 import { fetchMovieDetails } from "@/services/api";
 import useFetch from "@/services/useFetch";
+import {
+  isFavorite as checkFavorite,
+  removeFavorite,
+  saveFavorite,
+} from "@/utils/favorite";
 import { LinearGradient } from "expo-linear-gradient";
 import { router, useLocalSearchParams } from "expo-router";
 import Animated, {
-  FadeInUp,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
@@ -12,7 +16,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { WebView } from "react-native-webview";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Dimensions,
@@ -32,24 +36,6 @@ interface MovieInfoProps {
   icon?: any;
 }
 
-const MovieInfo = ({ label, value, icon }: MovieInfoProps) => (
-  <Animated.View
-    className="mb-5 bg-surface/30 backdrop-blur-sm rounded-xl p-4 border border-border-subtle/50"
-    entering={FadeInUp.delay(100).springify()}>
-    <View className="flex-row items-center mb-2">
-      {icon && (
-        <Image source={icon} className="size-4 mr-2" tintColor="#4a9eff" />
-      )}
-      <Text className="text-text-secondary font-medium text-xs tracking-wider uppercase">
-        {label}
-      </Text>
-    </View>
-    <Text className="text-text-primary font-semibold text-base leading-6">
-      {value || "N/A"}
-    </Text>
-  </Animated.View>
-);
-
 const MovieDetails = () => {
   const { id } = useLocalSearchParams();
   const [showTrailer, setShowTrailer] = useState(false);
@@ -57,7 +43,6 @@ const MovieDetails = () => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [showFullOverview, setShowFullOverview] = useState(false);
   const scrollY = useSharedValue(0);
-  const headerOpacity = useSharedValue(0);
   const favoriteScale = useSharedValue(1);
   const scrollViewRef = useRef<ScrollView>(null);
 
@@ -70,18 +55,6 @@ const MovieDetails = () => {
       (video.type === "Trailer" || video.type === "Teaser") &&
       video.site === "YouTube"
   );
-
-  // Animated styles
-  const headerAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: interpolate(scrollY.value, [0, 200], [0, 1]),
-      transform: [
-        {
-          translateY: interpolate(scrollY.value, [0, 200], [-50, 0]),
-        },
-      ],
-    };
-  });
 
   const heroAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -107,11 +80,32 @@ const MovieDetails = () => {
     setShowTrailer(true);
   };
 
-  const handleFavoritePress = () => {
+  useEffect(() => {
+    const loadFavoriteStatus = async () => {
+      if (id) {
+        const fav = await checkFavorite(id as string);
+        console.log("Movie ID:", id, "Is favorite:", fav);
+        setIsFavorite(fav);
+      }
+    };
+
+    loadFavoriteStatus();
+  }, [id]);
+
+  const handleFavoritePress = async () => {
     favoriteScale.value = withSpring(0.8, {}, () => {
       favoriteScale.value = withSpring(1);
     });
-    setIsFavorite(!isFavorite);
+
+    if (isFavorite) {
+      await removeFavorite(id as string);
+    } else {
+      await saveFavorite(id as string);
+    }
+
+    const updatedStatus = !isFavorite;
+
+    setIsFavorite(updatedStatus);
   };
 
   const getRatingColor = (rating: number) => {
@@ -157,39 +151,6 @@ const MovieDetails = () => {
         backgroundColor="transparent"
         translucent
       />
-
-      {/* Animated Header
-      <Animated.View
-        style={[headerAnimatedStyle]}
-        className="absolute top-0 left-0 right-0 z-30 bg-surface/95 backdrop-blur-md border-b border-border-subtle/30">
-        <View className="flex-row items-center justify-between px-6 pt-12 pb-4">
-          <TouchableOpacity
-            onPress={router.back}
-            className="bg-surface/50 rounded-full p-2">
-            <Image
-              source={icons.arrow}
-              className="size-5 rotate-180"
-              tintColor="#ffffff"
-            />
-          </TouchableOpacity>
-          <Text
-            className="text-text-primary font-bold text-lg"
-            numberOfLines={1}>
-            {movie?.title}
-          </Text>
-          <Animated.View style={favoriteAnimatedStyle}>
-            <TouchableOpacity
-              onPress={handleFavoritePress}
-              className="bg-surface/50 rounded-full p-2">
-              <Image
-                source={icons.star}
-                className="size-5"
-                tintColor={isFavorite ? "#ff4757" : "#ffffff"}
-              />
-            </TouchableOpacity>
-          </Animated.View>
-        </View>
-      </Animated.View> */}
 
       <ScrollView
         ref={scrollViewRef}
@@ -320,7 +281,7 @@ const MovieDetails = () => {
                   backgroundColor: getRatingColor(movie?.vote_average || 0),
                 }}>
                 <Image
-                  source={icons.favorite}
+                  source={icons.favorite_on}
                   className="size-5 mr-2"
                   tintColor="#ffffff"
                 />
