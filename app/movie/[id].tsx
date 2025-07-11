@@ -209,7 +209,7 @@ const MovieDetails = () => {
                   movie?.backdrop_path || movie?.poster_path
                 }`,
               }}
-              style={{ width, height: height * 0.6 }}
+              style={{ width, height: height * 0.75 }}
               resizeMode="cover"
             />
 

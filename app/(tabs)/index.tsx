@@ -72,15 +72,13 @@ const Index = () => {
           paddingBottom: 120,
           paddingHorizontal: 24,
         }}
-        showsVerticalScrollIndicator={false}
-      >
+        showsVerticalScrollIndicator={false}>
         {/* Header Section */}
         <Animated.View className="items-center pt-16 pb-8">
           <Animated.Image source={icons.logo} className="w-24 h-24 mb-2" />
           <Animated.Text
             entering={FadeInUp.delay(600).duration(400)}
-            className="text-text-secondary text-sm font-medium tracking-wide"
-          >
+            className="text-text-secondary text-sm font-medium tracking-wide">
             Discover Amazing Movies
           </Animated.Text>
         </Animated.View>
@@ -89,8 +87,7 @@ const Index = () => {
         {moviesLoading || trendingLoading ? (
           <Animated.View
             entering={FadeInUp.delay(300).duration(500)}
-            className="flex-1 justify-center items-center py-20"
-          >
+            className="flex-1 justify-center items-center py-20">
             <Animated.View entering={ZoomIn.delay(100).duration(400)}>
               <ActivityIndicator
                 size="large"
@@ -100,8 +97,7 @@ const Index = () => {
             </Animated.View>
             <Animated.Text
               entering={FadeInUp.delay(200).duration(400)}
-              className="text-text-secondary text-sm"
-            >
+              className="text-text-secondary text-sm">
               Loading movies...
             </Animated.Text>
           </Animated.View>
@@ -109,22 +105,18 @@ const Index = () => {
           /* Error State */
           <Animated.View
             entering={SlideInUp.delay(300).duration(600).springify()}
-            className="flex-1 justify-center items-center py-20"
-          >
+            className="flex-1 justify-center items-center py-20">
             <Animated.View
               entering={ZoomIn.delay(100).duration(500)}
-              className="bg-surface p-6 rounded-2xl border border-border-subtle"
-            >
+              className="bg-surface p-6 rounded-2xl border border-border-subtle">
               <Animated.Text
                 entering={FadeInDown.delay(200).duration(400)}
-                className="text-status-error text-lg font-semibold mb-2 text-center"
-              >
+                className="text-status-error text-lg font-semibold mb-2 text-center">
                 Something went wrong
               </Animated.Text>
               <Animated.Text
                 entering={FadeInUp.delay(300).duration(400)}
-                className="text-text-muted text-sm text-center"
-              >
+                className="text-text-muted text-sm text-center">
                 {moviesError?.message || trendingError?.message}
               </Animated.Text>
             </Animated.View>
@@ -133,8 +125,7 @@ const Index = () => {
           /* Main Content */
           <Animated.View
             entering={FadeInUp.delay(200).duration(600)}
-            className="flex-1"
-          >
+            className="flex-1">
             {/* Search Bar */}
             <View className="mb-8">
               <SearchBar
@@ -178,18 +169,15 @@ const Index = () => {
             <Animated.View entering={FadeInUp.delay(1100).duration(600)}>
               <Animated.View
                 entering={FadeInUp.delay(1200).duration(500).springify()}
-                className="flex-row items-center justify-between mb-4"
-              >
+                className="flex-row items-center justify-between mb-4">
                 <Animated.Text
                   entering={FadeInDown.delay(1300).duration(400)}
-                  className="text-xl font-bold text-text-primary"
-                >
+                  className="text-xl font-bold text-text-primary">
                   Latest Movies
                 </Animated.Text>
                 <Animated.Text
                   entering={FadeInDown.delay(1300).duration(400)}
-                  className="text-text-secondary text-md font-medium"
-                >
+                  className="text-text-secondary text-md font-medium">
                   {movies?.length || 0} movies
                 </Animated.Text>
               </Animated.View>
@@ -211,18 +199,15 @@ const Index = () => {
               ) : (
                 <Animated.View
                   entering={ZoomIn.delay(1500).duration(600).springify()}
-                  className="bg-surface p-8 rounded-2xl border border-border-subtle items-center"
-                >
+                  className="bg-surface p-8 rounded-2xl border border-border-subtle items-center">
                   <Animated.Text
                     entering={FadeInDown.delay(1600).duration(400)}
-                    className="text-text-secondary text-base font-medium mb-2"
-                  >
+                    className="text-text-secondary text-base font-medium mb-2">
                     No movies found
                   </Animated.Text>
                   <Animated.Text
                     entering={FadeInUp.delay(1700).duration(400)}
-                    className="text-text-muted text-sm text-center"
-                  >
+                    className="text-text-muted text-sm text-center">
                     Try refreshing or check your connection
                   </Animated.Text>
                 </Animated.View>

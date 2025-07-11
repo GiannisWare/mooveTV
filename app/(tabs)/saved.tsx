@@ -19,7 +19,7 @@ import Animated, {
   FadeInUp,
   useAnimatedStyle,
   useSharedValue,
-  withSpring
+  withSpring,
 } from "react-native-reanimated";
 
 const { width } = Dimensions.get("window");
@@ -142,27 +142,15 @@ const SavedMovieCard = ({
     <Animated.View
       entering={FadeInUp.delay(index * 100).springify()}
       style={[animatedStyle, { width: ITEM_WIDTH }]}
-      className="mb-4">
-      <TouchableOpacity
-       
-        className="bg-surface rounded-2xl overflow-hidden border border-border-subtle/30 shadow-lg"
-        style={{
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 4 },
-          shadowOpacity: 0.3,
-          shadowRadius: 8,
-          elevation: 8,
-        }}>
+      className="mb-10 justify-between">
+      <TouchableOpacity className="bg-surface rounded-2xl  overflow-hidden border border-border-subtle/30 shadow-lg">
         {/* Movie Poster */}
-        <View className="relative">
+        <View className="relative justify-between">
           <Image
             source={{
               uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
             }}
-            style={{
-              width: "100%",
-              height: ITEM_WIDTH * 1.5,
-            }}
+            className="w-full h-52 rounded-lg"
             resizeMode="cover"
           />
 
@@ -326,7 +314,7 @@ const SavedMoviesScreen = () => {
   );
 
   return (
-    <View className="flex-1 bg-primary">
+    <View className="flex-1 bg-dark-100">
       <StatusBar barStyle="light-content" backgroundColor="#1a1a1a" />
 
       <ScrollView
@@ -407,36 +395,15 @@ const SavedMoviesScreen = () => {
               numColumns={3}
               columnWrapperStyle={{
                 justifyContent: "space-between",
+                marginBottom: 4,
               }}
+              ItemSeparatorComponent={() => <View className="h-4" />}
               scrollEnabled={false}
               contentContainerStyle={{ paddingTop: 8 }}
             />
           </View>
         )}
       </ScrollView>
-
-      {/* Clear All Button */}
-      {savedMovies.length > 0 && (
-        <Animated.View
-          entering={FadeInUp.delay(500).springify()}
-          className="absolute bottom-8 left-6 right-6">
-          <TouchableOpacity
-            className="bg-surface/90 backdrop-blur-sm border border-border-subtle/30 rounded-2xl py-4 flex-row items-center justify-center"
-            onPress={() => {
-              // Add clear all logic with confirmation
-              setSavedMovies([]);
-            }}>
-            <Image
-              source={icons.trash}
-              className="size-5 mr-2"
-              tintColor="#ff4757"
-            />
-            <Text className="text-red-500 font-semibold text-base">
-              Clear All Saved Movies
-            </Text>
-          </TouchableOpacity>
-        </Animated.View>
-      )}
     </View>
   );
 };
